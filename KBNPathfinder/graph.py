@@ -74,7 +74,9 @@ class KBNGraph(ABC):
 
     def get_node_regional_score(self, node_id: int, k: int = 10) -> float:
         k_best_neighbors_relative_scores = self.get_k_best_neighbors(node_id, k)
-        return self.regional_score(self.nodes[node_id], k_best_neighbors_relative_scores.values())
+        return self.regional_score(
+            self.nodes[node_id], k_best_neighbors_relative_scores.values()
+        )
 
     @staticmethod
     def regional_score(node: Node, neighborhood_relative_scores: List[float]) -> float:
@@ -82,11 +84,20 @@ class KBNGraph(ABC):
         return (node.score + sum(neighborhood_relative_scores)) / n
 
     def get_k_best_neighbors(self, node_id: int, k: int = 10) -> Dict[int, float]:
-        """ Returns a dictionnary with k best relative score indexed with edge_ids
+        """Returns a dictionnary with k best relative score indexed with edge_ids
         /!\ Compute intensive method
         """
         node_egdes_id = self.neighborhood[node_id]
-        neighbors_scores = {edge_id: self.edges[edge_id].get_dest_relative_score(origin_node_id=node_id, max_cost=self.max_cost) for edge_id in node_egdes_id}
+        neighbors_scores = {
+            edge_id: self.edges[edge_id].get_dest_relative_score(
+                origin_node_id=node_id, max_cost=self.max_cost
+            )
+            for edge_id in node_egdes_id
+        }
         k_best_edge_ids = heapq.nlargest(k, neighbors_scores, key=neighbors_scores.get)
-        k_best_neighbors_scores = {edge_id: relative_score for edge_id, relative_score in neighbors_scores.items() if edge_id in k_best_edge_ids}
+        k_best_neighbors_scores = {
+            edge_id: relative_score
+            for edge_id, relative_score in neighbors_scores.items()
+            if edge_id in k_best_edge_ids
+        }
         return k_best_neighbors_scores

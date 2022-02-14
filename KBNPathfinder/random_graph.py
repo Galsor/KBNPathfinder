@@ -6,8 +6,9 @@ from KBNPathfinder.graph import KBNGraph, Node
 
 
 class RandomGraph(KBNGraph):
-
-    def __init__(self, n: int = 100, max_cost: float = 0.4, random_seed: Optional[int] = None):
+    def __init__(
+        self, n: int = 100, max_cost: float = 0.4, random_seed: Optional[int] = None
+    ):
         np.random.seed(random_seed)
         self.max_cost = max_cost
         self.nodes = self.gen_rand_node(n=n)

@@ -1,10 +1,12 @@
 import heapq
 import logging
 from dataclasses import dataclass
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
 import numpy as np
 
 logger = logging.getLogger(__file__)
+
 
 @dataclass
 class Node:
@@ -12,7 +14,6 @@ class Node:
     x: float
     y: float
     score: int
-
 
 
 @dataclass
@@ -54,18 +55,20 @@ def relative_node_score(node: Node, edge: Edge, max_cost: float) -> float:
     edge_cost = edge.cost
     return node_score * (1 - edge_cost/max_cost)"""
 
-def regional_score(node:Node, neighborhood_relative_scores: List[float], k: int) -> float:
+
+def regional_score(
+    node: Node, neighborhood_relative_scores: List[float], k: int
+) -> float:
     n = k + 1
-    return (node.score + sum(neighborhood_relative_scores))/n
+    return (node.score + sum(neighborhood_relative_scores)) / n
+
 
 class RandomGraph:
-
     def __init__(self, n: int = 100, max_cost: float = 0.4):
         self.max_cost = max_cost
         self.nodes: Dict[int, Node] = self.gen_rand_node(n=n)
         self.neighborhood = {node_id: [] for node_id in self.nodes.keys()}
         self.edges: Dict[int, Edge] = self.gen_egdes(n=n)
-
 
     @staticmethod
     def gen_rand_node(n=10) -> List[Node]:
@@ -92,20 +95,22 @@ class RandomGraph:
         return edges
 
     def get_k_best_nodes(self, k: int = 10):
-        """ Return the best chain of k nodes. Starting with the node of max score"""
+        """Return the best chain of k nodes. Starting with the node of max score"""
         first_node = self.get_node_with_max_score()
         k_best_nodes_list = self.find_next_best_neighbors([first_node], k)
         return k_best_nodes_list
 
     def find_next_best_neighbors(self, selected_nodes: List[Node], k: int):
-        """ Recursivly find k best contiguous nodes"""
+        """Recursivly find k best contiguous nodes"""
         last_node = selected_nodes[-1]
         excluded_nodes_ids = [node.id for node in selected_nodes]
-        next_node = self.get_neighboor_with_max_regional_score(last_node.id, excluded_nodes_ids, k)
+        next_node = self.get_neighboor_with_max_regional_score(
+            last_node.id, excluded_nodes_ids, k
+        )
         if next_node is not None:
             selected_nodes.append(next_node)
         if k > 0:
-            selected_nodes = self.find_next_best_neighbors(selected_nodes, k=k-1)
+            selected_nodes = self.find_next_best_neighbors(selected_nodes, k=k - 1)
         return selected_nodes
 
     def get_node_with_max_score(self) -> Node:
@@ -114,20 +119,33 @@ class RandomGraph:
         return node_score_dict[max_score]
 
     def get_k_best_neighbors(self, node_id: int, k: int = 10) -> Dict[int, float]:
-        """ Returns a dictionnary with k best relative score indexed with edge_ids
+        """Returns a dictionnary with k best relative score indexed with edge_ids
         /!\ Compute intensive method
         """
         node_egdes_id = self.neighborhood[node_id]
-        neighbors_scores = {edge_id: self.edges[edge_id].get_dest_relative_score(origin_node_id=node_id, max_cost=self.max_cost) for edge_id in node_egdes_id}
+        neighbors_scores = {
+            edge_id: self.edges[edge_id].get_dest_relative_score(
+                origin_node_id=node_id, max_cost=self.max_cost
+            )
+            for edge_id in node_egdes_id
+        }
         k_best_edge_ids = heapq.nlargest(k, neighbors_scores, key=neighbors_scores.get)
-        k_best_neighbors_scores = {edge_id: relative_score for edge_id, relative_score in neighbors_scores.items() if edge_id in k_best_edge_ids}
+        k_best_neighbors_scores = {
+            edge_id: relative_score
+            for edge_id, relative_score in neighbors_scores.items()
+            if edge_id in k_best_edge_ids
+        }
         return k_best_neighbors_scores
 
-    def get_node_regional_score(self, node_id:int, k: int = 10) -> float:
+    def get_node_regional_score(self, node_id: int, k: int = 10) -> float:
         k_best_neighbors_relative_scores = self.get_k_best_neighbors(node_id, k)
-        return regional_score(self.nodes[node_id], k_best_neighbors_relative_scores.values(), k)
+        return regional_score(
+            self.nodes[node_id], k_best_neighbors_relative_scores.values(), k
+        )
 
-    def get_neighboor_with_max_regional_score(self, node_id: int, excluded_node_ids_list: List[int], k: int) -> Optional[Node]:
+    def get_neighboor_with_max_regional_score(
+        self, node_id: int, excluded_node_ids_list: List[int], k: int
+    ) -> Optional[Node]:
         edges_ids = self.neighborhood[node_id]
         neigh_edges = [self.edges[e_id] for e_id in edges_ids]
         best_neighbor = None
@@ -145,7 +163,6 @@ class RandomGraph:
 
 
 # Press the green button in the gutter to run the script.
-if __name__ == '__main__':
+if __name__ == "__main__":
     g = RandomGraph()
     g.get_k_best_nodes(k=10)
-

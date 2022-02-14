@@ -9,7 +9,3 @@ def test_random_graph():
     assert len(g.nodes) == 10
     assert len(g.neighborhood) == 10
     assert g.edges
-
-
-
-
