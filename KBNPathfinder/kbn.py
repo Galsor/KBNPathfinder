@@ -1,7 +1,7 @@
 from typing import List
 import logging
 
-from KBN_Pathfinder.graph import KBNGraph, Node
+from KBNPathfinder.graph import KBNGraph, Node
 
 logger = logging.getLogger(__name__)
 
