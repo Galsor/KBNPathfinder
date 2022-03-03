@@ -74,6 +74,10 @@ class KBNGraph(BaseKBNGraph):
         self.neighborhood[node1.id].append(edge_id)
         self.neighborhood[node2.id].append(edge_id)
 
+    @property
+    def mean_score(self):
+        return np.mean([node.score for node in self.nodes.values()])
+
     def get_node_with_max_score(self) -> Node:
         node_score_dict = {node.score: node for node in self.nodes.values()}
         max_score = max(list(node_score_dict.keys()))
