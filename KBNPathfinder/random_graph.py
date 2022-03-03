@@ -2,7 +2,7 @@ from typing import List, Optional
 
 import numpy as np
 
-from KBNPathfinder.graph import KBNGraph, Node
+from KBNPathfinder.structures.graph import KBNGraph, Node
 
 
 class RandomGraph(KBNGraph):
