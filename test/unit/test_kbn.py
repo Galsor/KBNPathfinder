@@ -1,6 +1,4 @@
-import pytest
-
-from KBNPathfinder.graph import Node
+from KBNPathfinder.structures.graph import Node
 from KBNPathfinder.kbn import (
     find_next_best_neighbors,
     get_k_best_nodes,
