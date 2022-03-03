@@ -3,7 +3,9 @@ from typing import Dict, List, Union, Optional, Type
 
 import numpy as np
 
-from KBNPathfinder.structures.abc import BaseEdge, BaseKBNGraph
+from KBNPathfinder.metrics.distances import get_distance
+from KBNPathfinder.structures.abc import BaseKBNGraph
+from KBNPathfinder.structures.edge import Edge, Edge
 from KBNPathfinder.structures.node import Node
 
 
@@ -34,7 +36,7 @@ class KBNGraph(BaseKBNGraph):
                     d = BaseEdge.distance(node1, node2)
                     if d < self.max_cost:
                         edge_id = len(edges)
-                        edges[edge_id] = BaseEdge(id=edge_id, nodes=[node1, node2])
+                        edges[edge_id] = Edge(id=edge_id, nodes=[node1, node2], cost=d)
                         self.neighborhood[node1.id].append(edge_id)
                         self.neighborhood[node2.id].append(edge_id)
         return edges
