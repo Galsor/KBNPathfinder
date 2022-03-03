@@ -1,45 +1,78 @@
 import heapq
-from typing import Dict, List, Union, Optional, Type
+from typing import Dict, List, Optional, Type
 
 import numpy as np
 
 from KBNPathfinder.metrics.distances import get_distance
 from KBNPathfinder.structures.abc import BaseKBNGraph
-from KBNPathfinder.structures.edge import Edge, Edge
+from KBNPathfinder.structures.edge import Edge
 from KBNPathfinder.structures.node import Node
 
 
 class KBNGraph(BaseKBNGraph):
-    max_cost: float
-    nodes: Dict[int, Type[Node]]
-    neighborhood: Dict[int, List[int]]
-    edges: Dict[int, Type[BaseEdge]]
-    edge_offset: Optional[Union[int, float]]
 
-    def build_egdes(self, n: int, cost_fun: str) -> Dict[int, BaseEdge]:
+    def __init__(self, nodes_list: List[Node], distance: str = "euclidian", max_cost: Optional[float] = None, edge_cost_offset: Optional[float] = None):
+        self.max_cost = max_cost
+        self.edge_cost_offset = edge_cost_offset if edge_cost_offset is not None else 0
+        self._cost_fun = get_distance(distance)
+
+        self.nodes: Dict[int, Type[Node]] = {node.id: node for node in nodes_list}
+        self.neighborhood = {node_id: [] for node_id in self.nodes}
+        self.edges: Dict[int, Type[Edge]] = {}
+        self.build_egdes()
+
+    def build_egdes(self) -> Dict[int, Type[Edge]]:
         """
         Build a dictionary of edge_id (key) and Edge objects (values).
         Edges are created if their cost (distance) is inferior to the max cost of the graph.
-        If an edge offset is provided the
-        :param n:
-        :type n:
-        :param k:
-        :type k:
-        :return:
-        :rtype:
+        If an edge cost offset is provided the cost value is added with the offset.
+        Offsets can represents the cost of visit of a Node (ex: time spent to visit a museum or a shop
+        :param cost_offset:
+        :type cost_offset: float
+        :return: Dictionnary of edges indexes with their id
+        :rtype: Dict[int, Edge]
         """
-        edges = {}
+        if self.max_cost is None:
+            edges = self._build_edges_without_max_cost()
+        else:
+            edges = self._build_edges_with_max_cost()
+        return edges
+
+    def _build_edges_with_max_cost(self) -> None:
+        n = len(self.nodes)
         mask = np.tri(n) - np.eye(n)
+        
         for i, node1 in enumerate(self.nodes.values()):
             for j, node2 in enumerate(self.nodes.values()):
                 if mask[i][j]:
-                    d = BaseEdge.distance(node1, node2)
+                    d = self._cost_fun(node1, node2) + self.edge_cost_offset
                     if d < self.max_cost:
-                        edge_id = len(edges)
-                        edges[edge_id] = Edge(id=edge_id, nodes=[node1, node2], cost=d)
-                        self.neighborhood[node1.id].append(edge_id)
-                        self.neighborhood[node2.id].append(edge_id)
-        return edges
+                        self.make_edge(d, node1, node2)
+
+
+    def _build_edges_without_max_cost(self) -> None:
+        """
+        Building edges and setting the max edge cost values as class attribute
+        """
+        max_cost = 0
+        n = len(self.nodes)
+        mask = np.tri(n) - np.eye(n)
+
+        for i, node1 in enumerate(self.nodes.values()):
+            for j, node2 in enumerate(self.nodes.values()):
+                if mask[i][j]:
+                    d = self._cost_fun(node1, node2) + self.edge_cost_offset
+                    self.make_edge(d, node1, node2)
+                    if d > max_cost:
+                        max_cost = d
+
+        self.max_cost = max_cost
+
+    def make_edge(self, d: float, node1: Type[Node], node2: Type[Node]) -> None:
+        edge_id = len(self.edges)
+        self.edges[edge_id] = Edge(id=edge_id, nodes=[node1, node2], cost=d)
+        self.neighborhood[node1.id].append(edge_id)
+        self.neighborhood[node2.id].append(edge_id)
 
     def get_node_with_max_score(self) -> Node:
         node_score_dict = {node.score: node for node in self.nodes.values()}
