@@ -1,8 +1,12 @@
 # KBN Pathfinder
 
-This graph algorithm is providing suboptimal solutions to the combination of the Traveler Salesman Problem (TSP) and the
-Multiple Knapsacks Problem (MKP). A common use case is the traveler planning where locations to visit have different
-values (`score`) and distances (`cost`) and we are looking for a suitable solution maximizing the value and minimizing
+KBN Pathfinder is a convinient, graph-based, intelligible and performant tool to solve Orienteering Problem and its common alternatives Team Orienteering Problem and Constrained Orienteering Problem.
+This problem needs to be solved in numerus of applicative context such as Travel planning, Delivery routing or Field Sales Team Planning. 
+
+This graph algorithm is providing suboptimal, yet relevant and intelligible solutions to these problems.
+
+A common use case is the traveler planning where locations to visit have different
+ratings (`score`) and distances (`cost`) and we are looking for a suitable solution maximizing the value of the ratings and minimizing
 the distance.
 
 ## Getting Started
@@ -80,3 +84,8 @@ the `cost` to access this node (edge's distance).
 ### Penalize nodes with not enough neighbors
 
 It might happen that a node is not providing enough node to pursue the algorithm. This does not reflect
+
+### Introduce Node types or categories
+
+Some route are expected to be a balanced mix of node visits (ex: 2 restaurants, 1 museum & 1 hotel). 
+The Algorithm should be able to help with this constaint
