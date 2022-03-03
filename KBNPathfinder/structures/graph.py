@@ -1,68 +1,40 @@
 import heapq
-from abc import ABC
-from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Union, Optional, Type
 
 import numpy as np
 
-
-@dataclass
-class Node:
-    id: int
-    x: float
-    y: float
-    score: int
+from KBNPathfinder.structures.abc import BaseEdge, BaseKBNGraph
+from KBNPathfinder.structures.node import Node
 
 
-@dataclass
-class Edge:
-    id: int
-    nodes: List[Node]
-
-    @staticmethod
-    def distance(node1: Node, node2: Node) -> float:
-        return np.sqrt((node1.x - node2.x) ** 2 + (node1.y - node2.y) ** 2)
-
-    @property
-    def cost(self):
-        return self.distance(*self.nodes)
-
-    @property
-    def node_dict(self) -> Dict[int, Node]:
-        return {node.id: node for node in self.nodes}
-
-    def get_node(self, node_id: int) -> Node:
-        return self.node_dict[node_id]
-
-    def has_node(self, node_id: int) -> bool:
-        return node_id in [node.id for node in self.nodes]
-
-    def get_dest_node(self, origin_node_id: int) -> Node:
-        d = self.node_dict.copy()
-        del d[origin_node_id]
-        return list(d.values())[0]
-
-    def get_dest_relative_score(self, origin_node_id: int, max_cost: float) -> float:
-        dest_node = self.get_dest_node(origin_node_id)
-        return dest_node.score * (1 - self.cost / max_cost)
-
-
-class KBNGraph(ABC):
+class KBNGraph(BaseKBNGraph):
     max_cost: float
-    nodes: Dict[int, Node]
+    nodes: Dict[int, Type[Node]]
     neighborhood: Dict[int, List[int]]
-    edges: Dict[int, Edge]
+    edges: Dict[int, Type[BaseEdge]]
+    edge_offset: Optional[Union[int, float]]
 
-    def build_egdes(self, n: int):
+    def build_egdes(self, n: int, cost_fun: str) -> Dict[int, BaseEdge]:
+        """
+        Build a dictionary of edge_id (key) and Edge objects (values).
+        Edges are created if their cost (distance) is inferior to the max cost of the graph.
+        If an edge offset is provided the
+        :param n:
+        :type n:
+        :param k:
+        :type k:
+        :return:
+        :rtype:
+        """
         edges = {}
         mask = np.tri(n) - np.eye(n)
         for i, node1 in enumerate(self.nodes.values()):
             for j, node2 in enumerate(self.nodes.values()):
                 if mask[i][j]:
-                    d = Edge.distance(node1, node2)
+                    d = BaseEdge.distance(node1, node2)
                     if d < self.max_cost:
                         edge_id = len(edges)
-                        edges[edge_id] = Edge(id=edge_id, nodes=[node1, node2])
+                        edges[edge_id] = BaseEdge(id=edge_id, nodes=[node1, node2])
                         self.neighborhood[node1.id].append(edge_id)
                         self.neighborhood[node2.id].append(edge_id)
         return edges
@@ -73,6 +45,9 @@ class KBNGraph(ABC):
         return node_score_dict[max_score]
 
     def get_node_regional_score(self, node_id: int, k: int = 10) -> float:
+        """
+        node_id: Id of the node to investigate
+        k: amount of nodes to consider in scoring"""
         k_best_neighbors_relative_scores = self.get_k_best_neighbors(node_id, k)
         return self.regional_score(
             self.nodes[node_id], k_best_neighbors_relative_scores.values()
