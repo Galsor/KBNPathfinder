@@ -1,7 +1,7 @@
 import math
 
 from src.metrics.distances import (_DISTANCES, euclidian_distance,
-                                             get_distance, register_distance)
+                                   get_distance, register_distance)
 from src.structures.node import Node
 
 

@@ -6,7 +6,11 @@ from src.structures.node import Node
 
 
 def build_nodes_from_pandas(
-    df: pd.DataFrame, score_col: str, x_col: str, y_col: str, id_col: Optional[str] = None
+    df: pd.DataFrame,
+    score_col: str,
+    x_col: str,
+    y_col: str,
+    id_col: Optional[str] = None,
 ) -> List[Node]:
     selected_cols = [x_col, y_col, score_col]
     if id_col is not None:

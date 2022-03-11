@@ -18,7 +18,7 @@ def get_k_best_nodes(graph: KBNGraph, first_node: Node, k: int = 10) -> List[Nod
 
 def get_k_best_nodes_from_max_score(graph: KBNGraph, k: int = 10) -> List[Node]:
     best_node = graph.get_node_with_max_score()
-    k_best_nodes_list = find_next_best_neighbors(graph, [best_node], k-1)
+    k_best_nodes_list = find_next_best_neighbors(graph, [best_node], k - 1)
     return k_best_nodes_list
 
 

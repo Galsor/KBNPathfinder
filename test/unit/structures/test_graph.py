@@ -8,4 +8,3 @@ def test_get_coordinates(random_graph: KBNGraph):
 
     assert list(coordinates.columns) == ["x", "y"]
     assert coordinates.shape == (len(random_graph.nodes), 2)
-

@@ -1,5 +1,5 @@
 from src.kbn import (find_next_best_neighbors, get_k_best_nodes,
-                               get_neighboor_with_max_regional_score)
+                     get_neighboor_with_max_regional_score)
 from src.structures.graph import Node
 
 
