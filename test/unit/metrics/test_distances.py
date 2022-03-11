@@ -1,8 +1,8 @@
 import math
 
-from KBNPathfinder.metrics.distances import (_DISTANCES, euclidian_distance,
+from src.metrics.distances import (_DISTANCES, euclidian_distance,
                                              get_distance, register_distance)
-from KBNPathfinder.structures.node import Node
+from src.structures.node import Node
 
 
 def test_register_distance():

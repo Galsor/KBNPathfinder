@@ -1,7 +1,7 @@
 import pytest
 
-from KBNPathfinder.structures.edge import Edge
-from KBNPathfinder.structures.node import Node
+from src.structures.edge import Edge
+from src.structures.node import Node
 
 
 def test_edge_constructor(mock_node_pair):

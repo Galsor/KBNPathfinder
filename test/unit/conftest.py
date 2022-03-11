@@ -1,6 +1,6 @@
 import pytest
 
-from KBNPathfinder.random_graph import RandomGraph
+from src.random_graph import RandomGraph
 
 
 @pytest.fixture
