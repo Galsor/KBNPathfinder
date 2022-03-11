@@ -1,11 +1,13 @@
 import math
 
-from KBNPathfinder.metrics.distances import register_distance, _DISTANCES, get_distance, euclidian_distance
+from KBNPathfinder.metrics.distances import (_DISTANCES, euclidian_distance,
+                                             get_distance, register_distance)
 from KBNPathfinder.structures.node import Node
 
 
 def test_register_distance():
     distance_name = "test_distance"
+
     @register_distance(distance_name)
     def null_distance():
         return 0
@@ -23,6 +25,6 @@ def test_get_distance():
 
 
 def test_euclidian_distance():
-    node1, node2 = Node(id=0,  x=1, y=0, score=0), Node(id=1, x=0, y=1, score=0)
+    node1, node2 = Node(id=0, x=1, y=0, score=0), Node(id=1, x=0, y=1, score=0)
     distance = euclidian_distance(node1, node2)
     assert distance == math.sqrt(2)

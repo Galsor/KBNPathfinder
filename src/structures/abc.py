@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Type, Dict
+from typing import Dict, List, Type
 
 from KBNPathfinder.structures.edge import Edge
 from KBNPathfinder.structures.node import Node

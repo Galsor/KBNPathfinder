@@ -1,5 +1,5 @@
 import math
-from typing import Type, Tuple
+from typing import Tuple, Type
 
 import pytest
 

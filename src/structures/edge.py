@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Type, Dict
+from typing import Dict, List, Type
 
 from KBNPathfinder.metrics.scores import node_relative_score
 from KBNPathfinder.structures.node import Node

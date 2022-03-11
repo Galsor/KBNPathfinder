@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import List, Optional
 
 from KBNPathfinder.structures.graph import KBNGraph, Node
@@ -15,15 +16,24 @@ def get_k_best_nodes(graph: KBNGraph, first_node: Node, k: int = 10) -> List[Nod
     return k_best_nodes_list
 
 
+def get_k_best_nodes_from_max_score(graph: KBNGraph, k: int = 10) -> List[Node]:
+    best_node = graph.get_node_with_max_score()
+    k_best_nodes_list = find_next_best_neighbors(graph, [best_node], k-1)
+    return k_best_nodes_list
+
+
 def find_next_best_neighbors(
     graph: KBNGraph, selected_nodes: List[Node], node_count_to_add: int
 ) -> List[Node]:
     """Recursivly find k best contiguous nodes"""
     last_node = selected_nodes[-1]
     excluded_nodes_ids = [node.id for node in selected_nodes]
+    t0 = time.time()
     next_node = get_neighboor_with_max_regional_score(
         graph, last_node.id, excluded_nodes_ids, node_count_to_add
     )
+    print("Node selection duration:", round(time.time() - t0, 2), "s")
+    print("Node selected:", next_node)
     if next_node is not None:
         selected_nodes.append(next_node)
     if node_count_to_add > 1:

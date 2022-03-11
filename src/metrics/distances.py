@@ -1,6 +1,7 @@
+from typing import Any, Callable, Dict, Type
+
 import numpy as np
 from scipy.spatial import distance
-from typing import Type, Callable, Dict, Any
 
 from KBNPathfinder.structures.node import Node
 
@@ -13,7 +14,9 @@ def register_distance(name: str) -> Callable:
 
         def wrapper(*args, **kwargs) -> Any:
             return fun(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
@@ -22,13 +25,12 @@ def get_distance(name: str) -> Callable:
         distance_fun = _DISTANCES[name]
         return distance_fun
     except KeyError:
-        raise ValueError(f"Invalid distance name with {name}. Implemented distances are: [{', '.join(_DISTANCES.keys())}]")
+        raise ValueError(
+            f"Invalid distance name with {name}. Implemented distances are: [{', '.join(_DISTANCES.keys())}]"
+        )
 
 
 @register_distance("euclidian")
 def euclidian_distance(node1: Type[Node], node2: Type[Node]) -> np.float64:
     vector1, vector2 = [node1.x, node1.y], [node2.x, node2.y]
     return distance.euclidean(vector1, vector2)
-
-
-

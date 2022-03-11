@@ -10,8 +10,13 @@ from KBNPathfinder.structures.node import Node
 
 
 class KBNGraph(BaseKBNGraph):
-
-    def __init__(self, nodes_list: List[Node], distance: str = "euclidian", max_cost: Optional[float] = None, edge_cost_offset: Optional[float] = None):
+    def __init__(
+        self,
+        nodes_list: List[Node],
+        distance: str = "euclidian",
+        max_cost: Optional[float] = None,
+        edge_cost_offset: Optional[float] = None,
+    ):
         self.max_cost = max_cost
         self.edge_cost_offset = edge_cost_offset if edge_cost_offset is not None else 0
         self._cost_fun = get_distance(distance)
@@ -41,14 +46,13 @@ class KBNGraph(BaseKBNGraph):
     def _build_edges_with_max_cost(self) -> None:
         n = len(self.nodes)
         mask = np.tri(n) - np.eye(n)
-        
+
         for i, node1 in enumerate(self.nodes.values()):
             for j, node2 in enumerate(self.nodes.values()):
                 if mask[i][j]:
                     d = self._cost_fun(node1, node2) + self.edge_cost_offset
                     if d < self.max_cost:
                         self.make_edge(d, node1, node2)
-
 
     def _build_edges_without_max_cost(self) -> None:
         """
