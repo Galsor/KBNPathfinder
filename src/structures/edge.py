@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict, List, Type
 
-from KBNPathfinder.metrics.scores import node_relative_score
-from KBNPathfinder.structures.node import Node
+from src.metrics.scores import node_relative_score
+from src.structures.node import Node
 
 
 @dataclass

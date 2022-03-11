@@ -4,10 +4,10 @@ from typing import Dict, List, Optional, Type
 import numpy as np
 import pandas as pd
 
-from KBNPathfinder.metrics.distances import get_distance
-from KBNPathfinder.structures.abc import BaseKBNGraph
-from KBNPathfinder.structures.edge import Edge
-from KBNPathfinder.structures.node import Node
+from src.metrics.distances import get_distance
+from src.structures.abc import BaseKBNGraph
+from src.structures.edge import Edge
+from src.structures.node import Node
 
 
 class KBNGraph(BaseKBNGraph):

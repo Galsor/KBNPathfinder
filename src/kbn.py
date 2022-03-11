@@ -2,7 +2,7 @@ import logging
 import time
 from typing import List, Optional
 
-from KBNPathfinder.structures.graph import KBNGraph, Node
+from src.structures.graph import KBNGraph, Node
 
 logger = logging.getLogger(__name__)
 

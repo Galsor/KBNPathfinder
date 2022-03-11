@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Type
 
-from KBNPathfinder.structures.edge import Edge
-from KBNPathfinder.structures.node import Node
+from src.structures.edge import Edge
+from src.structures.node import Node
 
 
 class BaseKBNGraph(ABC):

@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, Type
 import numpy as np
 from scipy.spatial import distance
 
-from KBNPathfinder.structures.node import Node
+from src.structures.node import Node
 
 _DISTANCES: Dict[str, Callable] = {}
 
