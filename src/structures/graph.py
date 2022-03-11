@@ -2,6 +2,7 @@ import heapq
 from typing import Dict, List, Optional, Type
 
 import numpy as np
+import pandas as pd
 
 from KBNPathfinder.metrics.distances import get_distance
 from KBNPathfinder.structures.abc import BaseKBNGraph
@@ -119,3 +120,8 @@ class KBNGraph(BaseKBNGraph):
             if edge_id in k_best_edge_ids
         }
         return k_best_neighbors_scores
+
+    def get_coordinates(self) -> pd.DataFrame:
+        coords = {node.id: [node.x, node.y] for node in self.nodes.values()}
+        df = pd.DataFrame(coords).T.rename(columns={0: "x", 1: "y"})
+        return df
