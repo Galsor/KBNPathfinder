@@ -1,8 +1,8 @@
 import pandas as pd
 import pytest
 
-from KBNPathfinder.structures.node import Node
-from KBNPathfinder.utils.builders import build_nodes_from_pandas
+from src.structures.node import Node
+from src.utils.builders import build_nodes_from_pandas
 
 
 def test_build_nodes_from_pandas():

@@ -2,7 +2,7 @@ from typing import List, Optional
 
 import pandas as pd
 
-from KBNPathfinder.structures.node import Node
+from src.structures.node import Node
 
 
 def build_nodes_from_pandas(
