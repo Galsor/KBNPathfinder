@@ -8,4 +8,4 @@ class Node:
     x: float
     y: float
     score: int
-    properties: Dict[str, Any] = field(default_factory={})
+    properties: Dict[str, Any] = field(default_factory=dict)
