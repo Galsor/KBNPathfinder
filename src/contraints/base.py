@@ -1,15 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Union
+
+from src.structures.node import Node
 
 
 class BaseConstraint(ABC):
 
     @abstractmethod
-    @property
-    def completion_rate(self) -> float:
-        ...
-
-    @abstractmethod
-    @property
-    def value(self) -> Union[int, float]:
+    def penalize_score(self, node: Node) -> float:
         ...
