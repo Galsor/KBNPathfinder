@@ -60,7 +60,7 @@ class RandomGraph(KBNGraph):
 
     def gen_rand_cat_property(self, n: int) -> np.ndarray:
         probabilistic_distribution = self.random_gen.dirichlet(np.ones(len(self.CATEGORICAL_PROPERTIES)), size=1)[0]
-        return np.random.choice(self.CATEGORICAL_PROPERTIES, size=n, p=probabilistic_distribution)
+        return self.random_gen.choice(self.CATEGORICAL_PROPERTIES, size=n, p=probabilistic_distribution)
 
     def gen_rand_num_property(self, n: int) -> np.ndarray:
         return self.random_gen.integers(0, 100, n)
