@@ -32,8 +32,8 @@ def find_next_best_neighbors(
     next_node = get_neighboor_with_max_regional_score(
         graph, last_node.id, excluded_nodes_ids, node_count_to_add
     )
-    print("Node selection duration:", round(time.time() - t0, 2), "s")
-    print("Node selected:", next_node)
+    logger.info("Node selection duration:", round(time.time() - t0, 2), "s")
+    logger.info("Node selected:", next_node)
     if next_node is not None:
         selected_nodes.append(next_node)
     if node_count_to_add > 1:
