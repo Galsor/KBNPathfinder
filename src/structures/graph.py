@@ -11,6 +11,8 @@ from src.structures.node import Node
 
 
 class KBNGraph(BaseKBNGraph):
+    parent: Optional[int] = None
+
     def __init__(
         self,
         nodes_list: List[Node],
@@ -26,6 +28,10 @@ class KBNGraph(BaseKBNGraph):
         self.neighborhood = {node_id: [] for node_id in self.nodes}
         self.edges: Dict[int, Type[Edge]] = {}
         self.build_egdes()
+
+    @property
+    def id(self):
+        return id(self)
 
     def build_egdes(self) -> Dict[int, Type[Edge]]:
         """
@@ -125,3 +131,28 @@ class KBNGraph(BaseKBNGraph):
         coords = {node.id: [node.x, node.y] for node in self.nodes.values()}
         df = pd.DataFrame(coords).T.rename(columns={0: "x", 1: "y"})
         return df
+
+
+class KBNSubGraph(KBNGraph):
+    def __init__(self, parent_graph: KBNGraph, nodes: List[int]):
+        self.parent = parent_graph.id
+        self.nodes = {node_id: parent_graph.nodes[node_id] for node_id in nodes}
+
+        self.edges = {}
+        self.neighborhood = {node_id: [] for node_id in self.nodes}
+        self._extract_edges_and_neighboors(parent_graph)
+
+        self.max_cost = parent_graph.max_cost
+        self.edge_cost_offset = parent_graph.edge_cost_offset
+        self._cost_fun = parent_graph._cost_fun
+
+    def _extract_edges_and_neighboors(self, parent_graph: KBNGraph) -> Dict[int, List[Type[Edge]]]:
+        """ Collect edges when **both** nodes are included in the subgraph. Then update class variables."""
+        valid_nodes = list(self.nodes.keys())
+        for edge_id, edge in parent_graph.edges.items():
+            edge_in_subgraph = all([node.id in valid_nodes for node in edge.nodes])
+            if edge_in_subgraph:
+                self.edges[edge_id] = edge
+                for node in edge.nodes:
+                    self.neighborhood[node.id].append(edge_id)
+
