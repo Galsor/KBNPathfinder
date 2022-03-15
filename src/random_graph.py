@@ -1,4 +1,4 @@
-from typing import List, Optional, Union, Dict, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
@@ -32,16 +32,20 @@ class RandomGraph(KBNGraph):
         v = self.gen_random_scores(n)
         properties = self.gen_properties(n, with_categorical=True, with_numerical=True)
         for i in range(n):
-            nodes.append(Node(id=i, x=x[i], y=y[i], score=v[i], properties=properties[i]))
+            nodes.append(
+                Node(id=i, x=x[i], y=y[i], score=v[i], properties=properties[i])
+            )
         return nodes
 
-    def gen_random_coordinates(self, n:int) -> Tuple[np.ndarray, np.ndarray]:
+    def gen_random_coordinates(self, n: int) -> Tuple[np.ndarray, np.ndarray]:
         return self.random_gen.random(n), self.random_gen.random(n)
 
     def gen_random_scores(self, n: int) -> np.ndarray:
         return self.random_gen.integers(0, 100, n)
 
-    def gen_properties(self, n: int, with_categorical: bool = True, with_numerical: bool = True) -> List[Dict[str, Union[str, int]]]:
+    def gen_properties(
+        self, n: int, with_categorical: bool = True, with_numerical: bool = True
+    ) -> List[Dict[str, Union[str, int]]]:
         properties = [{} for _ in range(n)]
 
         raw_properties = {}
@@ -59,9 +63,12 @@ class RandomGraph(KBNGraph):
         return properties
 
     def gen_rand_cat_property(self, n: int) -> np.ndarray:
-        probabilistic_distribution = self.random_gen.dirichlet(np.ones(len(self.CATEGORICAL_PROPERTIES)), size=1)[0]
-        return self.random_gen.choice(self.CATEGORICAL_PROPERTIES, size=n, p=probabilistic_distribution)
+        probabilistic_distribution = self.random_gen.dirichlet(
+            np.ones(len(self.CATEGORICAL_PROPERTIES)), size=1
+        )[0]
+        return self.random_gen.choice(
+            self.CATEGORICAL_PROPERTIES, size=n, p=probabilistic_distribution
+        )
 
     def gen_rand_num_property(self, n: int) -> np.ndarray:
         return self.random_gen.integers(0, 100, n)
-

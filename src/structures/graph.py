@@ -146,8 +146,10 @@ class KBNSubGraph(KBNGraph):
         self.edge_cost_offset = parent_graph.edge_cost_offset
         self._cost_fun = parent_graph._cost_fun
 
-    def _extract_edges_and_neighboors(self, parent_graph: KBNGraph) -> Dict[int, List[Type[Edge]]]:
-        """ Collect edges when **both** nodes are included in the subgraph. Then update class variables."""
+    def _extract_edges_and_neighboors(
+        self, parent_graph: KBNGraph
+    ) -> Dict[int, List[Type[Edge]]]:
+        """Collect edges when **both** nodes are included in the subgraph. Then update class variables."""
         valid_nodes = list(self.nodes.keys())
         for edge_id, edge in parent_graph.edges.items():
             edge_in_subgraph = all([node.id in valid_nodes for node in edge.nodes])
@@ -155,4 +157,3 @@ class KBNSubGraph(KBNGraph):
                 self.edges[edge_id] = edge
                 for node in edge.nodes:
                     self.neighborhood[node.id].append(edge_id)
-

@@ -10,4 +10,10 @@ def test_random_graph():
     assert len(g.nodes) == 10
     assert len(g.neighborhood) == 10
     assert g.edges
-    assert all([prop in node.properties for node in g.nodes.values() for prop in expected_properties])
+    assert all(
+        [
+            prop in node.properties
+            for node in g.nodes.values()
+            for prop in expected_properties
+        ]
+    )
