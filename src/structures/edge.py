@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Type
+from typing import Dict, Type, Tuple
 
 from src.metrics.scores import node_relative_score
 from src.structures.node import Node
@@ -8,7 +8,7 @@ from src.structures.node import Node
 @dataclass
 class Edge:
     id: int
-    nodes: List[Type[Node]]
+    nodes: Tuple[Type[Node]]
     cost: float
 
     @property
@@ -37,4 +37,7 @@ class Edge:
         eq_nodes = set(other.nodes) == set(self.nodes)
         eq_cost = other.cost == self.cost
         return all([eq_id, eq_nodes, eq_cost])
+
+    def __hash__(self):
+        return hash((self.id, self.nodes[0], self.nodes[1], self.cost))
 
