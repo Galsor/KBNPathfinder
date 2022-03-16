@@ -13,11 +13,10 @@ def build_nodes_from_pandas(
     id_col: Optional[str] = None,
     properties_cols: List[str] = [],
 ) -> List[Node]:
-
     nodes = []
     for i, row in df.iterrows():
         properties = row[properties_cols].to_dict()
-        id_value = row[3] if id_col is not None else i
+        id_value = row[id_col] if id_col is not None else i
         nodes.append(
             Node(
                 id=id_value,
