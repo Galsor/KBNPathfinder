@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Type
 
 import pandas as pd
 
@@ -31,7 +31,13 @@ class FlexibleCategoricalRatioConstraint(BaseConstraint):
 
     def update_state(self, added_node: Node) -> None:
         category = added_node.properties.get(self.property_name)
-        self.category_counts[category] += 1
+        if category is not None:
+            self.category_counts[category] += 1
+
+    def revert_state(self, node_to_remove: Type[Node]) -> None:
+        category = node_to_remove.properties.get(self.property_name)
+        if category is not None:
+            self.category_counts[category] -= 1
 
     def compute_category_means(self, graph: KBNGraph) -> Dict[Any, float]:
         df_category = pd.DataFrame(
