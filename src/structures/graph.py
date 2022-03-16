@@ -1,5 +1,5 @@
 import heapq
-from typing import Dict, List, Optional, Type
+from typing import Dict, Iterable, List, Optional, Tuple, Type
 
 import numpy as np
 import pandas as pd
@@ -27,6 +27,7 @@ class KBNGraph(BaseKBNGraph):
         self.nodes: Dict[int, Type[Node]] = {node.id: node for node in nodes_list}
         self.neighborhood = {node_id: [] for node_id in self.nodes}
         self.edges: Dict[int, Type[Edge]] = {}
+        self.deactivated_nodes: Dict[int, Tuple[Type[Node], List[Type[Edge]]]] = {}
         self.build_egdes()
 
     @property
@@ -85,6 +86,31 @@ class KBNGraph(BaseKBNGraph):
         self.neighborhood[node1.id].append(edge_id)
         self.neighborhood[node2.id].append(edge_id)
 
+    def deactivate_node(self, node_id: int):
+        node = self.nodes[node_id]
+        related_edges = [self.edges[edge_id] for edge_id in self.neighborhood[node_id]]
+        self.deactivated_nodes[node_id] = (node, related_edges)
+        self.delete_node(node_id)
+
+    def reactivate_node(self, node_id: int):
+        try:
+            node, related_edges = self.deactivated_nodes[node_id]
+            self.nodes[node_id] = node
+            for edge in related_edges:
+                self.edges[edge.id] = edge
+            self.neighborhood[node_id] = [edge.id for edge in related_edges]
+            del self.deactivated_nodes[node_id]
+        except KeyError:
+            raise KeyError(
+                f"Node id [{node_id}] does not exist in the graph's deactivated nodes."
+            )
+
+    def delete_node(self, node_id):
+        del self.nodes[node_id]
+        for edge_id in self.neighborhood[node_id]:
+            del self.edges[edge_id]
+        del self.neighborhood[node_id]
+
     @property
     def mean_score(self):
         return np.mean([node.score for node in self.nodes.values()])
@@ -104,7 +130,9 @@ class KBNGraph(BaseKBNGraph):
         )
 
     @staticmethod
-    def regional_score(node: Node, neighborhood_relative_scores: List[float]) -> float:
+    def regional_score(
+        node: Type[Node], neighborhood_relative_scores: Iterable[float]
+    ) -> float:
         n = len(neighborhood_relative_scores) + 1
         return (node.score + sum(neighborhood_relative_scores)) / n
 
