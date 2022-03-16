@@ -15,4 +15,4 @@ class Node:
             self.__setattr__(prop_name, value)
 
     def __hash__(self):
-        return hash(self.id, self.x, self.y, self.score, *self.properties.values())
+        return hash((self.id, self.x, self.y, self.score, *self.properties.values()))

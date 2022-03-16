@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Type, Tuple
+from typing import Dict, Tuple, Type
 
 from src.metrics.scores import node_relative_score
 from src.structures.node import Node
@@ -40,4 +40,3 @@ class Edge:
 
     def __hash__(self):
         return hash((self.id, self.nodes[0], self.nodes[1], self.cost))
-
