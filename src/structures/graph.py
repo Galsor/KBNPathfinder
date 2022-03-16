@@ -106,10 +106,26 @@ class KBNGraph(BaseKBNGraph):
             )
 
     def delete_node(self, node_id):
+        # Delete node
         del self.nodes[node_id]
+
+        # Delete edges
+        related_edges = []
         for edge_id in self.neighborhood[node_id]:
+            related_edges.append(self.edges[edge_id])
             del self.edges[edge_id]
+
+        # Delete neighborhood relation
         del self.neighborhood[node_id]
+
+        # Delete neighborhood relation in neighbors
+        related_neighbors = [
+            (edge.get_dest_node(node_id).id, edge.id) for edge in related_edges
+        ]
+        for neighbor_id, edge_id in related_neighbors:
+            neighbor_edges = self.neighborhood[neighbor_id]
+            neighbor_edges.remove(edge_id)
+            self.neighborhood[neighbor_id] = neighbor_edges
 
     @property
     def mean_score(self):
