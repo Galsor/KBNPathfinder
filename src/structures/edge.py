@@ -29,3 +29,12 @@ class Edge:
     def get_dest_relative_score(self, origin_node_id: int, max_cost: float) -> float:
         dest_node = self.get_dest_node(origin_node_id)
         return node_relative_score(dest_node.score, self.cost, max_cost)
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, self.__class__):
+            raise TypeError(f"{type(other)} can't be compared with Edge.")
+        eq_id = self.id == other.id
+        eq_nodes = set(other.nodes) == set(self.nodes)
+        eq_cost = other.cost == self.cost
+        return all([eq_id, eq_nodes, eq_cost])
+
