@@ -34,15 +34,21 @@ def test_reactivate_node(random_graph):
     random_graph.deactivate_node(deactivated_node_id)
     assert deactivated_node_id in random_graph.deactivated_nodes
 
-    deactivated_node, deactivated_edges = random_graph.deactivated_nodes[deactivated_node_id]
+    deactivated_node, deactivated_edges = random_graph.deactivated_nodes[
+        deactivated_node_id
+    ]
     random_graph.reactivate_node(deactivated_node_id)
 
     assert deactivated_node_id not in random_graph.deactivated_nodes
     assert deactivated_node_id in random_graph.nodes
     assert random_graph.nodes[deactivated_node_id] == deactivated_node
-    assert random_graph.neighborhood[deactivated_node_id] == [edge.id for edge in deactivated_edges]
+    assert random_graph.neighborhood[deactivated_node_id] == [
+        edge.id for edge in deactivated_edges
+    ]
     assert all([edge.id in random_graph.edges for edge in deactivated_edges])
-    assert set([random_graph.edges[edge.id] for edge in deactivated_edges]) == set(deactivated_edges)
+    assert set([random_graph.edges[edge.id] for edge in deactivated_edges]) == set(
+        deactivated_edges
+    )
 
 
 def test_delete_node(random_graph):
@@ -54,7 +60,6 @@ def test_delete_node(random_graph):
     assert node_id_to_delete not in random_graph.nodes
     assert node_id_to_delete not in random_graph.nodes
     assert all([edge_id not in random_graph.edges for edge_id in related_edges_ids])
-
 
 
 def test_subgraph_creation(random_graph: KBNGraph):
