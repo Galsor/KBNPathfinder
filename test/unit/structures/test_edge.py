@@ -44,3 +44,9 @@ def test_get_dest_relative_score(mock_euclidian_edge):
         origin_node_id=org_node_id, max_cost=100
     )
     assert round(rel_score, 4) == 9.8586
+
+
+def test_hash(mock_euclidian_edge):
+    expected_hash = 2644103063924780238
+    hash_value = hash(mock_euclidian_edge)
+    assert expected_hash == hash_value
