@@ -60,7 +60,8 @@ class KBNGraph(BaseKBNGraph):
                 if mask[i][j]:
                     d = self._cost_fun(node1, node2) + self.edge_cost_offset
                     if d < self.max_cost:
-                        self.make_edge(d, node1, node2)
+                        edge = self.make_edge(d, node1, node2)
+                        self.register_neighborhood(node1, node2, edge)
 
     def _build_edges_without_max_cost(self) -> None:
         """
@@ -74,17 +75,27 @@ class KBNGraph(BaseKBNGraph):
             for j, node2 in enumerate(self.nodes.values()):
                 if mask[i][j]:
                     d = self._cost_fun(node1, node2) + self.edge_cost_offset
-                    self.make_edge(d, node1, node2)
+                    edge = self.make_edge(d, node1, node2)
+                    self.register_neighborhood(node1, node2, edge)
                     if d > max_cost:
                         max_cost = d
 
         self.max_cost = max_cost
 
-    def make_edge(self, d: float, node1: Type[Node], node2: Type[Node]) -> None:
+    def make_edge(
+        self, d: float, node1: Type[Node], node2: Type[Node], register=True
+    ) -> Type[Edge]:
         edge_id = len(self.edges)
-        self.edges[edge_id] = Edge(id=edge_id, nodes=[node1, node2], cost=d)
-        self.neighborhood[node1.id].append(edge_id)
-        self.neighborhood[node2.id].append(edge_id)
+        edge = Edge(id=edge_id, nodes=[node1, node2], cost=d)
+        if register:
+            self.edges[edge_id] = edge
+        return edge
+
+    def register_neighborhood(
+        self, node1: Type[Node], node2: Type[Node], edge: Type[Edge]
+    ) -> None:
+        self.neighborhood[node1.id].append(edge.id)
+        self.neighborhood[node2.id].append(edge.id)
 
     def deactivate_node(self, node_id: int):
         node = self.nodes[node_id]
