@@ -98,6 +98,7 @@ class KBNGraph(BaseKBNGraph):
         self.neighborhood[node2.id].append(edge.id)
 
     def deactivate_node(self, node_id: int):
+
         node = self.nodes[node_id]
         related_edges = [self.edges[edge_id] for edge_id in self.neighborhood[node_id]]
         self.deactivated_nodes[node_id] = (node, related_edges)
@@ -108,7 +109,9 @@ class KBNGraph(BaseKBNGraph):
             node, related_edges = self.deactivated_nodes[node_id]
             self.nodes[node_id] = node
             for edge in related_edges:
+                dest_node = edge.get_dest_node(node_id)
                 self.edges[edge.id] = edge
+                self.register_neighborhood(node, dest_node, edge)
             self.neighborhood[node_id] = [edge.id for edge in related_edges]
             del self.deactivated_nodes[node_id]
         except KeyError:
