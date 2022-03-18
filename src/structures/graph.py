@@ -194,11 +194,12 @@ class KBNGraph(BaseKBNGraph):
 
     @property
     def node_density(self) -> float:
-        (x_min, y_min), (x_max, y_max) = self.get_coordinates_bounding_box(self.coordinates)
+        (x_min, y_min), (x_max, y_max) = self.get_coordinates_bounding_box(
+            self.coordinates
+        )
         surface = (x_max - x_min) * (y_max - y_min)
         node_count = len(self.nodes)
-        return node_count/surface
-
+        return node_count / surface
 
 
 class KBNSubGraph(KBNGraph):
