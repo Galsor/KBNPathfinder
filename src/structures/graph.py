@@ -186,6 +186,7 @@ class KBNGraph(BaseKBNGraph):
         return k_best_neighbors_scores
 
     def get_coordinates(self) -> pd.DataFrame:
+        #TODO : Turn it to cached property
         coords = {node.id: [node.x, node.y] for node in self.nodes.values()}
         df = pd.DataFrame(coords).T.rename(columns={0: "x", 1: "y"})
         return df
