@@ -3,8 +3,7 @@ import time
 from typing import List, Optional, Type
 
 from src.contraints.base import BaseConstraint
-from src.contraints.update import (revert_constraints_for_all,
-                                   update_constraints)
+from src.contraints.update import revert_constraints_for_all, update_constraints
 from src.structures.graph import KBNGraph, Node
 
 logger = logging.getLogger(__name__)
@@ -24,6 +23,7 @@ def get_groups_of_k_best_nodes_from_max_score(
     total_k: int = 10,
     n_groups: int = 5,
     constraints: List[BaseConstraint] = [],
+    max_iter: Optional[int] = None,
 ) -> List[List[Type[Node]]]:
     def dispatch_k(total_k, n_groups) -> List[int]:
         base, rest = total_k // n_groups, total_k % n_groups
@@ -35,7 +35,8 @@ def get_groups_of_k_best_nodes_from_max_score(
     results = []
     k_values = dispatch_k(total_k, n_groups)
     i = 0
-    while len(results) < n_groups:
+    max_iter = max_iter if max_iter is not None else n_groups * 3
+    while len(results) < n_groups or i < max_iter:
         logger.info(f"Starting optimisation for group {i+1}")
         candidates = get_k_best_nodes_from_max_score(
             graph, k=k_values[len(results)], constraints=constraints
@@ -44,6 +45,7 @@ def get_groups_of_k_best_nodes_from_max_score(
             results.append(candidates)
         else:
             revert_constraints_for_all(constraints, candidates)
+        i += 1
     return results
 
 
