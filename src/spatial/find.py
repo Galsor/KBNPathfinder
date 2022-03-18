@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import pandas as pd
 from scipy.spatial.distance import cdist
@@ -27,3 +27,12 @@ def get_closest_node_id(
         cdist([[x, y]], coordinates.values, metric=distance).argmin()
     ].name
     return closest_node_id
+
+
+def get_coordinates_bounding_box(
+    coordinates: pd.DataFrame,
+) -> Tuple[Tuple[float, float], Tuple[float, float]]:
+    return (coordinates["x"].min(), coordinates["y"].min()), (
+        coordinates["x"].max(),
+        coordinates["y"].max(),
+    )
