@@ -8,7 +8,7 @@ def from_node_with_max_score(graph: KBNGraph) -> Node:
 
 
 def from_closest_node(graph: KBNGraph, x: float, y: float) -> Node:
-    nodes_coords_df = graph.get_coordinates()
+    nodes_coords_df = graph.coordinates()
     closest_node_id = get_closest_node_id(coordinates=nodes_coords_df, x=x, y=y)
     node = graph.nodes[closest_node_id]
     return node
