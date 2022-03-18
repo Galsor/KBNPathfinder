@@ -1,4 +1,5 @@
 import heapq
+from functools import cached_property
 from typing import Dict, Iterable, List, Optional, Tuple, Type
 
 import numpy as np
@@ -185,11 +186,19 @@ class KBNGraph(BaseKBNGraph):
         }
         return k_best_neighbors_scores
 
-    def get_coordinates(self) -> pd.DataFrame:
-        #TODO : Turn it to cached property
+    @cached_property
+    def coordinates(self) -> pd.DataFrame:
         coords = {node.id: [node.x, node.y] for node in self.nodes.values()}
         df = pd.DataFrame(coords).T.rename(columns={0: "x", 1: "y"})
         return df
+
+    @property
+    def node_density(self) -> float:
+        (x_min, y_min), (x_max, y_max) = self.get_coordinates_bounding_box(self.coordinates)
+        surface = (x_max - x_min) * (y_max - y_min)
+        node_count = len(self.nodes)
+        return node_count/surface
+
 
 
 class KBNSubGraph(KBNGraph):
