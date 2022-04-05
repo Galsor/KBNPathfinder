@@ -19,7 +19,7 @@ def test_deactivate_node(random_graph):
         for edge_id in random_graph.neighborhood[node_id_to_deactivate]
     ]
 
-    random_graph.deactivate_node(node_id_to_deactivate)
+    random_graph.deactivate_nodes(node_id_to_deactivate)
     deactivated_node, deactivated_edges = random_graph.deactivated_nodes[
         node_id_to_deactivate
     ]
@@ -31,7 +31,7 @@ def test_deactivate_node(random_graph):
 
 def test_reactivate_node(random_graph):
     deactivated_node_id = 0
-    random_graph.deactivate_node(deactivated_node_id)
+    random_graph.deactivate_nodes(deactivated_node_id)
     assert deactivated_node_id in random_graph.deactivated_nodes
 
     deactivated_node, deactivated_edges = random_graph.deactivated_nodes[
