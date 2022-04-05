@@ -1,6 +1,6 @@
 import heapq
 from functools import cached_property
-from typing import Dict, Iterable, List, Optional, Tuple, Type
+from typing import Dict, Iterable, List, Optional, Tuple, Type, Union
 
 import numpy as np
 import pandas as pd
@@ -98,12 +98,13 @@ class KBNGraph(BaseKBNGraph):
         self.neighborhood[node1.id].append(edge.id)
         self.neighborhood[node2.id].append(edge.id)
 
-    def deactivate_node(self, node_id: int):
+    def deactivate_nodes(self, node_ids: Union[List[int], int]):
+        node_ids = [node_ids] if isinstance(node_ids, list) else node_ids
 
-        node = self.nodes[node_id]
-        related_edges = [self.edges[edge_id] for edge_id in self.neighborhood[node_id]]
-        self.deactivated_nodes[node_id] = (node, related_edges)
-        self.delete_node(node_id)
+        node = self.nodes[node_ids]
+        related_edges = [self.edges[edge_id] for edge_id in self.neighborhood[node_ids]]
+        self.deactivated_nodes[node_ids] = (node, related_edges)
+        self.delete_node(node_ids)
 
     def reactivate_node(self, node_id: int):
         try:
