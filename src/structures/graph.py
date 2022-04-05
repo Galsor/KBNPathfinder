@@ -218,7 +218,7 @@ class KBNGraph(BaseKBNGraph):
 class KBNSubGraph(KBNGraph):
     def __init__(self, parent_graph: KBNGraph, nodes: List[int]):
         self.parent = parent_graph.id
-        self.nodes = self.get_nodes_from_parent(nodes)
+        self.nodes = self.get_nodes_from_parent(parent_graph, nodes)
         self.deactivated_nodes: Dict[int, Tuple[Type[Node], List[Type[Edge]]]] = {}
 
         self.edges = {}
@@ -229,14 +229,15 @@ class KBNSubGraph(KBNGraph):
         self.edge_cost_offset = parent_graph.edge_cost_offset
         self._cost_fun = parent_graph._cost_fun
 
-    def get_nodes_from_parent(self, nodes: List[int]) -> Dict[int, Type[Node]]:
+    @staticmethod
+    def get_nodes_from_parent(graph: KBNGraph, nodes: List[int]) -> Dict[int, Type[Node]]:
         """ Default tolerant approach to collect nodes from parent graph.
         Especillay usefull when a Node has been deleted from parent graph
         by previous exploration iteration """
 
         subgraph_nodes = {}
         for node_id in nodes:
-            node = self.parent.nodes.get(node_id)
+            node = graph.nodes.get(node_id)
             if node is not None:
                 subgraph_nodes[node_id] = node
             else:
