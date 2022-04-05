@@ -218,7 +218,8 @@ class KBNGraph(BaseKBNGraph):
 class KBNSubGraph(KBNGraph):
     def __init__(self, parent_graph: KBNGraph, nodes: List[int]):
         self.parent = parent_graph.id
-        self.nodes = {node_id: parent_graph.nodes[node_id] for node_id in nodes}
+        self.nodes = self.get_nodes_from_parent(nodes)
+        self.deactivated_nodes: Dict[int, Tuple[Type[Node], List[Type[Edge]]]] = {}
 
         self.edges = {}
         self.neighborhood = {node_id: [] for node_id in self.nodes}
@@ -228,10 +229,26 @@ class KBNSubGraph(KBNGraph):
         self.edge_cost_offset = parent_graph.edge_cost_offset
         self._cost_fun = parent_graph._cost_fun
 
+    def get_nodes_from_parent(self, nodes: List[int]) -> Dict[int, Type[Node]]:
+        """ Default tolerant approach to collect nodes from parent graph.
+        Especillay usefull when a Node has been deleted from parent graph
+        by previous exploration iteration """
+
+        subgraph_nodes = {}
+        for node_id in nodes:
+            node = self.parent.nodes.get(node_id)
+            if node is not None:
+                subgraph_nodes[node_id] = node
+            else:
+                continue
+        return subgraph_nodes
+
     def _extract_edges_and_neighboors(
         self, parent_graph: KBNGraph
     ) -> Dict[int, List[Type[Edge]]]:
-        """Collect edges when **both** nodes are included in the subgraph. Then update class variables."""
+        """Collect edges when **both** nodes are included in the subgraph.
+        Then update class variables."""
+
         valid_nodes = list(self.nodes.keys())
         for edge_id, edge in parent_graph.edges.items():
             edge_in_subgraph = all([node.id in valid_nodes for node in edge.nodes])
