@@ -201,6 +201,19 @@ class KBNGraph(BaseKBNGraph):
         node_count = len(self.nodes)
         return node_count / surface
 
+    @property
+    def shape(self) -> Tuple[int, int]:
+        """ Shape of the graph where:
+         - first element is the amount of nodes
+         - second is the amount of edges
+        """
+        return len(self.nodes), len(self.edges)
+
+    @property
+    def connectivity(self) -> float:
+        """ Average rate of connection of graph's nodes"""
+        return np.mean([len(n) for n in self.neighborhood.values()]) / len(self.nodes)
+
 
 class KBNSubGraph(KBNGraph):
     def __init__(self, parent_graph: KBNGraph, nodes: List[int]):
