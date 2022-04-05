@@ -109,7 +109,7 @@ def find_next_best_neighbors(
 
     if next_node is not None:
         selected_nodes.append(next_node)
-        graph.deactivate_nodes(last_node.id)
+        graph.deactivate_nodes(last_node)
 
     if node_count_to_add > 1:
         # Pursue recursion
@@ -118,7 +118,7 @@ def find_next_best_neighbors(
             graph, selected_nodes, node_count_to_add, constraints
         )
     elif next_node is not None:
-        graph.deactivate_nodes(next_node.id)
+        graph.deactivate_nodes(next_node)
         update_constraints(constraints, next_node)
 
     return selected_nodes
