@@ -23,6 +23,7 @@ def get_groups_of_k_best_nodes_from_max_score(
     **kwargs
 ) -> List[List[Type[Node]]]:
     logger.info(f"Main graph information -> Shape:{graph.shape}. Connectivity:{graph.connectivity}")
+    logger.info(f"Task objective: select {total_k} nodes divided in {n_groups} groups")
 
     k_values = dispatch_k_in_n_groups(total_k, n_groups)
     subgraphs_nodes_ids = get_subgraphs_nodes_list_from_k_best_nodes_convolution(
@@ -34,8 +35,9 @@ def get_groups_of_k_best_nodes_from_max_score(
     results = []
     max_iter = max_iter if max_iter is not None else n_groups * 3
     while len(results) < n_groups or i < max_iter:
-        logger.info(f"Starting optimisation for group {i+1}")
         k = k_values[len(results)]
+        logger.info(f"Starting iteration {i} [group {len(results)}]")
+
 
         subgraph = next(subgraph_gen)
         logger.info(f"Selected subgraph information -> Shape:{subgraph.shape}. Connectivity:{subgraph.connectivity}")
@@ -44,10 +46,13 @@ def get_groups_of_k_best_nodes_from_max_score(
             subgraph, k=k, constraints=constraints
         )
         logger.info(f"Node selected for initialisation: {init_node}")
-        candidates = get_k_best_nodes(subgraph, init_node, k=k-1)
+        candidates = get_k_best_nodes(subgraph, init_node, k=k)
         logger.info(f"Candidates selected ({len(candidates)}): {candidates}")
         if len(candidates) >= k:
             results.append(candidates)
+            graph.deactivate_nodes(candidates)
+            if len(results) == n_groups:
+                break
         else:
             revert_constraints_for_all(constraints, candidates)
         i += 1
@@ -103,7 +108,7 @@ def find_next_best_neighbors(
 
     if next_node is not None:
         selected_nodes.append(next_node)
-        graph.deactivate_node(last_node.id)
+        graph.deactivate_nodes(last_node.id)
 
     if node_count_to_add > 1:
         # Pursue recursion
@@ -112,7 +117,7 @@ def find_next_best_neighbors(
             graph, selected_nodes, node_count_to_add, constraints
         )
     elif next_node is not None:
-        graph.deactivate_node(next_node.id)
+        graph.deactivate_nodes(next_node.id)
         update_constraints(constraints, next_node)
 
     return selected_nodes
