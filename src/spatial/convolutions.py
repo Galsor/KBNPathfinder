@@ -6,25 +6,31 @@ import pandas as pd
 from src.spatial.find import get_coordinates_bounding_box
 from src.structures.graph import KBNGraph, KBNSubGraph
 
+logger = logging.getLogger(__name__)
 
 class Convolver:
     x_series: pd.Series
     y_series: pd.Series
+    window_x_len: float
+    window_y_len: float
 
-    def __init__(self, coords: pd.DataFrame, x_col: str = "x", y_col: str = "y"):
+    def __init__(self, coords: pd.DataFrame, window_shape: Tuple[float, float],  x_col: str = "x", y_col: str = "y"):
         self.x_series = coords[x_col]
         self.y_series = coords[y_col]
+        self.window_x_len, self.window_y_len = window_shape
 
     def get_index_in_frame(
-        self, x_min: float, y_min: float, frame_size: Tuple[int, int]
+        self, x_min: float, y_min: float
     ) -> List[int]:
         valid_x_index = self.get_index_when_values_are_between(
-            self.x_series, min=x_min, max=x_min + frame_size[0]
+            self.x_series, min=x_min, max=x_min + self.window_x_len
         )
         valid_y_index = self.get_index_when_values_are_between(
-            self.x_series, min=y_min, max=y_min + frame_size[1]
+            self.y_series, min=y_min, max=y_min + self.window_y_len
         )
+
         index_in_frame = valid_x_index.intersection(valid_y_index)
+
         return index_in_frame.to_list()
 
     @staticmethod
