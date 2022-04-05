@@ -5,9 +5,9 @@ from src.structures.graph import KBNSubGraph, KBNGraph
 
 
 @dataclass
-class SubgraphGenerator:
+class SubgraphIterator:
     graph: KBNGraph
-    node_list: List[int]
+    node_list: List[List[int]]
 
     def __next__(self) -> KBNSubGraph:
-        return KBNSubGraph(self.graph, self.node_list)
+        return KBNSubGraph(self.graph, self.node_list.pop(0))
