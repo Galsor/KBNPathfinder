@@ -98,13 +98,25 @@ class KBNGraph(BaseKBNGraph):
         self.neighborhood[node1.id].append(edge.id)
         self.neighborhood[node2.id].append(edge.id)
 
-    def deactivate_nodes(self, node_ids: Union[List[int], int]):
-        node_ids = [node_ids] if isinstance(node_ids, list) else node_ids
+    def deactivate_nodes(self, nodes: Union[Iterable[Type[Node]], Node]) -> None:
+        nodes = [nodes] if not isinstance(nodes, Iterable) else nodes
+        nodes_ids = [node.id for node in nodes]
+        self.deactivate_nodes_by_id(nodes_ids)
 
-        node = self.nodes[node_ids]
-        related_edges = [self.edges[edge_id] for edge_id in self.neighborhood[node_ids]]
-        self.deactivated_nodes[node_ids] = (node, related_edges)
-        self.delete_node(node_ids)
+    def deactivate_nodes_by_id(self, node_ids: Union[Iterable[int], int]) -> None:
+        node_ids = [node_ids] if not isinstance(node_ids, Iterable) else node_ids
+
+        for node_id in node_ids:
+            if not isinstance(node_id, int):
+                raise TypeError("Invalid id provided. node id should be `int`")
+            try:
+                node = self.nodes[node_id]
+                related_edges = [self.edges[edge_id] for edge_id in self.neighborhood[node_id]]
+                self.deactivated_nodes[node_id] = (node, related_edges)
+                self.delete_node(node_id)
+            except KeyError:
+                continue
+
 
     def reactivate_node(self, node_id: int):
         try:
@@ -231,13 +243,13 @@ class KBNSubGraph(KBNGraph):
         self._cost_fun = parent_graph._cost_fun
 
     @staticmethod
-    def get_nodes_from_parent(graph: KBNGraph, nodes: List[int]) -> Dict[int, Type[Node]]:
+    def get_nodes_from_parent(graph: KBNGraph, node_list: List[int]) -> Dict[int, Type[Node]]:
         """ Default tolerant approach to collect nodes from parent graph.
         Especillay usefull when a Node has been deleted from parent graph
         by previous exploration iteration """
 
         subgraph_nodes = {}
-        for node_id in nodes:
+        for node_id in node_list:
             node = graph.nodes.get(node_id)
             if node is not None:
                 subgraph_nodes[node_id] = node
