@@ -38,7 +38,6 @@ def get_groups_of_k_best_nodes_from_max_score(
         k = k_values[len(results)]
         logger.info(f"Starting iteration {i} [group {len(results)}]")
 
-
         subgraph = next(subgraph_gen)
         logger.info(f"Selected subgraph information -> Shape:{subgraph.shape}. Connectivity:{subgraph.connectivity}")
 
@@ -46,8 +45,10 @@ def get_groups_of_k_best_nodes_from_max_score(
             subgraph, k=k, constraints=constraints
         )
         logger.info(f"Node selected for initialisation: {init_node}")
+
         candidates = get_k_best_nodes(subgraph, init_node, k=k)
         logger.info(f"Candidates selected ({len(candidates)}): {candidates}")
+
         if len(candidates) >= k:
             results.append(candidates)
             graph.deactivate_nodes(candidates)
@@ -90,10 +91,10 @@ def get_k_best_nodes(graph: KBNGraph, first_node: Node, k: int = 10) -> List[Nod
 
 def find_next_best_neighbors(
     graph: KBNGraph,
-    selected_nodes: List[Node],
+    selected_nodes: List[Type[Node]],
     node_count_to_add: int,
-    constraints: List[BaseConstraint] = [],
-) -> List[Node]:
+    constraints: List[Type[BaseConstraint]] = [],
+) -> List[Type[Node]]:
     """Recursivly find k best contiguous nodes"""
     last_node = selected_nodes[-1]
     update_constraints(constraints, last_node)
@@ -127,8 +128,8 @@ def get_neighboor_with_max_regional_score(
     graph: KBNGraph,
     node_id: int,
     amount_of_neighbors_to_compare: int,
-    constraints: List[BaseConstraint] = [],
-) -> Optional[Node]:
+    constraints: List[Type[BaseConstraint]] = [],
+) -> Optional[Type[Node]]:
 
     edges_ids = graph.neighborhood[node_id]
     neigh_edges = [graph.edges[e_id] for e_id in edges_ids]
@@ -152,7 +153,7 @@ def compute_score(
     graph: KBNGraph,
     node: Node,
     amount_of_neighbors_to_compare: int,
-    constraints: List[BaseConstraint] = [],
+    constraints: List[Type[BaseConstraint]] = [],
 ) -> float:
     regional_score = graph.get_node_regional_score(
         node.id, amount_of_neighbors_to_compare

@@ -98,7 +98,7 @@ class KBNGraph(BaseKBNGraph):
         self.neighborhood[node1.id].append(edge.id)
         self.neighborhood[node2.id].append(edge.id)
 
-    def deactivate_nodes(self, nodes: Union[Iterable[Type[Node]], Node]) -> None:
+    def deactivate_nodes(self, nodes: Union[Iterable[Type[Node]], Type[Node]]) -> None:
         nodes = [nodes] if not isinstance(nodes, Iterable) else nodes
         nodes_ids = [node.id for node in nodes]
         self.deactivate_nodes_by_id(nodes_ids)
