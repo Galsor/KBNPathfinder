@@ -44,7 +44,13 @@ class Convolver:
         return serie[serie.between(min, max)].index
 
 
-def get_subgraphs_nodes_list_from_k_best_nodes_convolution(graph: KBNGraph, k: int, window_shape: Optional[Tuple[float, float]] = None, window_overlap: float = 0.75, convolution_score: BaseConvolutionScore = KBestNodes) -> List[int]:
+def get_subgraphs_nodes_list_from_k_best_nodes_convolution(
+        graph: KBNGraph,
+        k: int,
+        window_shape: Optional[Tuple[float, float]] = None,
+        window_overlap: float = 0.75,
+        convolution_score: BaseConvolutionScore = KBestNodes
+) -> List[List[int]]:
     """
         Explore the graph through a convolution and
         returns a sorted list of nodes id.
